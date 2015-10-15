@@ -79,4 +79,13 @@ public class Accelerometer_Service {
         }
     }
 
+    public static float getMagX(){
+        return mag_reading[0];
+    }
+    public static float getMagY(){
+        return mag_reading[1];
+    }
+    public static float getMagZ(){
+        return mag_reading[2];
+    }
 }
