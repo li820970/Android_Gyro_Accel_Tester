@@ -38,6 +38,7 @@ public class Accelerometer_Service {
 
                 if(type == Sensor.TYPE_MAGNETIC_FIELD){
                     mag_reading = event.values.clone();
+
                 }
                 if(type == Sensor.TYPE_ACCELEROMETER){
                     accel_reading = event.values.clone();
@@ -85,7 +86,5 @@ public class Accelerometer_Service {
     public static float getMagY(){
         return mag_reading[1];
     }
-    public static float getMagZ(){
-        return mag_reading[2];
-    }
+    public static float getMagZ(){  return mag_reading[2]; }
 }
