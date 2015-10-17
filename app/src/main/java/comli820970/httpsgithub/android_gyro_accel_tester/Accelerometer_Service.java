@@ -9,6 +9,8 @@ import android.widget.ToggleButton;
 
 import org.w3c.dom.Text;
 
+import java.util.prefs.Preferences;
+
 /**
  * Created by INTERNET EXAMPLE CODE YAY on 10/13/2015.
  */
@@ -33,6 +35,9 @@ public class Accelerometer_Service {
 
     private static int[] attitude_in_degrees = new int[3];
 
+    private static boolean isAppActive = true;
+    private static boolean loggingActive = false;
+
     public static void start(final Context applicationContext){
         if(started) return;
        // SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext);
@@ -43,22 +48,24 @@ public class Accelerometer_Service {
         sensor_event_listener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+               // SharedPreferences prefs = PreferenceManager.getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
+
 
                 int type = event.sensor.getType();
 
                 if(type == Sensor.TYPE_MAGNETIC_FIELD){
                     mag_reading = event.values.clone();
 
-                    if(prefs.getBoolean("isActive",false)){
+                    if(isAppActive){
                         Intent i = new Intent("MAG_UPDATED");
-                        i.putExtra("x",mag_reading[0]);
-                        i.putExtra("y",mag_reading[1]);
-                        i.putExtra("z",mag_reading[2]);
+                        i.putExtra("x",Float.toString(mag_reading[0]));
+                        i.putExtra("y",Float.toString(mag_reading[1]));
+                        i.putExtra("z",Float.toString(mag_reading[2]));
 
                         applicationContext.sendBroadcast(i);
 
                     }
+
 
                 }
                 if(type == Sensor.TYPE_ACCELEROMETER){
@@ -87,6 +94,7 @@ public class Accelerometer_Service {
         sensor_manager.registerListener(sensor_event_listener,
                 sensor_manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_UI);
+
         started = true;
 
     }
@@ -103,22 +111,26 @@ public class Accelerometer_Service {
     }
 
     public static void startLogging(){
-
+        loggingActive = true;
     }
     public static void stopLogging(){
-
+        loggingActive = true;
     }
 
+    public static boolean getLogging(){
+        return loggingActive;
+    }
     public static void AddLogEntry(){
 
 
     }
+    public static void appIsNowInactive(){isAppActive = false;}
+    public static void appIsActive(){isAppActive = true;}
+
     public static float getMagX(){
         return mag_reading[0];
     }
-    public static float getMagY(){
-        return mag_reading[1];
-    }
+    public static float getMagY(){ return mag_reading[1]; }
     public static float getMagZ(){  return mag_reading[2]; }
 
 
