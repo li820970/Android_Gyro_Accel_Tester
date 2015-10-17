@@ -125,7 +125,7 @@ public class Accelerometer_Service {
 
     }
     public static void appIsNowInactive(){isAppActive = false;}
-    public static void appIsActive(){isAppActive = true;}
+    public static void appIsNowActive(){isAppActive = true;}
 
     public static float getMagX(){
         return mag_reading[0];

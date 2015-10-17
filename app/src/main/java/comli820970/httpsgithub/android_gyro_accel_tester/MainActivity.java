@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Accelerometer_Service.start(this.getApplicationContext());
-
+        Accelerometer_Service.appIsNowActive();
 
 
 
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume(){
         super.onResume();
 
-        Accelerometer_Service.appIsNowInactive();
+        Accelerometer_Service.appIsNowActive();
 //        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 //        SharedPreferences.Editor editor = prefs.edit();
 //
