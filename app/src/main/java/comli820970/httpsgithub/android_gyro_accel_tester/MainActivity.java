@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -68,7 +69,9 @@ public class MainActivity extends AppCompatActivity {
         gyro_z.setText(Float.toString(Accelerometer_Service.getMagZ()));
     }
 
-    public void loggingToggle() {
+
+
+    public void loggingToggle(View view) {
         ToggleButton logging_togglebutton = (ToggleButton) findViewById(R.id.toggleButton_Logging);
 
         SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
@@ -87,9 +90,5 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("loggingEnabled", false);
             Accelerometer_Service.stopLogging();
         }
-
-
     }
-
-
 }

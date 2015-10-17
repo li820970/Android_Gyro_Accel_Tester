@@ -48,19 +48,16 @@
         android:layout_alignParentStart="true" />
 
     <ToggleButton
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textOff="Enable Logging"
-        android:textOn="Logging..."
+        android:textOn= "Logging..."
         android:id="@+id/toggleButton_Logging"
         android:checked="false"
+        android:onClick="loggingToggle"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/gyro_x"
-        android:layout_alignEnd="@+id/gyro_x"
-        android:onClick="loggingToggle"
-        />
-    <!--android:text="Enable Logging"this was up thar^-->
+        android:layout_alignParentStart="true" />
+    <!--USE THIS^ WITH NESTED LINEAR LAYOUT LATER-->
 
 </RelativeLayout>
