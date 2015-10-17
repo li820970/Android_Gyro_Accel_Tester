@@ -1,8 +1,13 @@
 package comli820970.httpsgithub.android_gyro_accel_tester;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.*; //I'm lazy
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.widget.TextView;
+import android.widget.ToggleButton;
+
+import org.w3c.dom.Text;
 
 /**
  * Created by INTERNET EXAMPLE CODE YAY on 10/13/2015.
@@ -46,12 +51,19 @@ public class Accelerometer_Service {
                     mag_reading = event.values.clone();
 
                     if(prefs.getBoolean("isActive",false)){
+                        Intent i = new Intent("MAG_UPDATED");
+                        i.putExtra("x",mag_reading[0]);
+                        i.putExtra("y",mag_reading[1]);
+                        i.putExtra("z",mag_reading[2]);
+
+                        applicationContext.sendBroadcast(i);
 
                     }
 
                 }
                 if(type == Sensor.TYPE_ACCELEROMETER){
                     accel_reading = event.values.clone();
+
 
                 }
 
@@ -96,6 +108,11 @@ public class Accelerometer_Service {
     public static void stopLogging(){
 
     }
+
+    public static void AddLogEntry(){
+
+
+    }
     public static float getMagX(){
         return mag_reading[0];
     }
@@ -103,4 +120,6 @@ public class Accelerometer_Service {
         return mag_reading[1];
     }
     public static float getMagZ(){  return mag_reading[2]; }
+
+
 }

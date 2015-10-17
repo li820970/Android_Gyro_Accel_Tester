@@ -1,5 +1,9 @@
 package comli820970.httpsgithub.android_gyro_accel_tester;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +34,20 @@ public class MainActivity extends AppCompatActivity {
 
 
         updateGyroValues();
+        BroadcastReceiver update = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                TextView gyro_x = (TextView) findViewById(R.id.gyro_x);
+                gyro_x.setText(intent.getExtras().getString("x"));
 
+                TextView gyro_y = (TextView) findViewById(R.id.gyro_y);
+                gyro_x.setText(intent.getExtras().getString("y"));
+
+                TextView gyro_z = (TextView) findViewById(R.id.gyro_z);
+                gyro_x.setText(intent.getExtras().getString("z"));
+            }
+        };
+        registerReceiver( update, new IntentFilter("MAG_UPDATED"));
 
     }
 
