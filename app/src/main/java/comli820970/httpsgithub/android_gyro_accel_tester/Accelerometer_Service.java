@@ -1,6 +1,8 @@
 package comli820970.httpsgithub.android_gyro_accel_tester;
+import android.content.SharedPreferences;
 import android.hardware.*; //I'm lazy
 import android.content.Context;
+import android.preference.PreferenceManager;
 
 /**
  * Created by INTERNET EXAMPLE CODE YAY on 10/13/2015.
@@ -28,16 +30,24 @@ public class Accelerometer_Service {
 
     public static void start(final Context applicationContext){
         if(started) return;
+       // SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+
+
 
         sensor_manager = (SensorManager) applicationContext.getSystemService(Context.SENSOR_SERVICE);
         sensor_event_listener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext);
 
                 int type = event.sensor.getType();
 
                 if(type == Sensor.TYPE_MAGNETIC_FIELD){
                     mag_reading = event.values.clone();
+
+                    if(prefs.getBoolean("isActive",false)){
+
+                    }
 
                 }
                 if(type == Sensor.TYPE_ACCELEROMETER){
@@ -80,6 +90,12 @@ public class Accelerometer_Service {
         }
     }
 
+    public static void startLogging(){
+
+    }
+    public static void stopLogging(){
+
+    }
     public static float getMagX(){
         return mag_reading[0];
     }

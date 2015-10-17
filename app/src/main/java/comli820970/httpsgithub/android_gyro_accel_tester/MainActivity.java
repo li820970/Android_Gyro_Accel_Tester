@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,33 +14,51 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
+        SharedPreferences.Editor editor = prefs.edit();
+
         setContentView(R.layout.activity_main);
         Accelerometer_Service.start(this.getApplicationContext());
 
-        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
+
 
         editor.putBoolean("isActive", true); // Storing string
-        editor.putBoolean("LoggingEnabled", true);
+        editor.putBoolean("loggingEnabled", false);
         editor.commit();
 
 
-        updateValues();
+        updateGyroValues();
 
 
     }
 
     public void onPause(){
         super.onPause();
+
+        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putBoolean("isActive", false); // Storing string
+        editor.commit();
     }
 
 
     public void onResume(){
         super.onResume();
 
+        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        ToggleButton logging_togglebutton = (ToggleButton) findViewById(R.id.toggleButton_Logging);
+
+        editor.putBoolean("isActive", true); // Storing string
+        logging_togglebutton.setChecked(prefs.getBoolean("loggingEnabled", false));//set proper state of logging button
+
+        editor.commit();
     }
 
-    public void updateValues(){
+    public void updateGyroValues(){
         TextView gyro_x = (TextView) findViewById(R.id.gyro_x);
         TextView gyro_y = (TextView) findViewById(R.id.gyro_y);
         TextView gyro_z = (TextView) findViewById(R.id.gyro_z);
@@ -49,6 +68,28 @@ public class MainActivity extends AppCompatActivity {
         gyro_z.setText(Float.toString(Accelerometer_Service.getMagZ()));
     }
 
+    public void loggingToggle() {
+        ToggleButton logging_togglebutton = (ToggleButton) findViewById(R.id.toggleButton_Logging);
+
+        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        if (logging_togglebutton.isChecked()){
+
+
+
+            editor.putBoolean("loggingEnabled", true);
+            Accelerometer_Service.startLogging();
+        }else{
+
+
+
+            editor.putBoolean("loggingEnabled", false);
+            Accelerometer_Service.stopLogging();
+        }
+
+
+    }
 
 
 }
