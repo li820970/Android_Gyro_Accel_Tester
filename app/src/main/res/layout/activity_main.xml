@@ -58,6 +58,61 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Accelerometer"
+        android:id="@+id/accel_label"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Accel_X Placeholder"
+        android:id="@+id/accel_x"
+        android:layout_alignTop="@+id/gyro_x"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Accel_Y Placeholder"
+        android:id="@+id/accel_y"
+        android:layout_alignTop="@+id/gyro_y"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Accel_Z Placeholder"
+        android:id="@+id/accel_z"
+        android:layout_alignTop="@+id/gyro_z"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="gravityToggle"
+        android:textOff="Filter Gravity"
+        android:textOn= "Filtering Gravity..."
+        android:id="@+id/toggleButton_Gravity"
+        android:checked="false"
+        android:layout_below="@+id/accel_z"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="10dp"
+        android:layout_alignLeft="@+id/accel_label"
+        android:layout_alignStart="@+id/accel_label" />
     <!--USE THIS^ WITH NESTED LINEAR LAYOUT LATER-->
 
 </RelativeLayout>

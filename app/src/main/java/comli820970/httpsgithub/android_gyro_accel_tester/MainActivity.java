@@ -13,8 +13,33 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity {
+    BroadcastReceiver updateAccel = new BroadcastReceiver() {//Receiver for Magnemoter only
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            TextView accel_x = (TextView) findViewById(R.id.accel_x);
+            accel_x.setText(intent.getExtras().getString("x"));
 
+            TextView accel_y = (TextView) findViewById(R.id.accel_y);
+            accel_y.setText(intent.getExtras().getString("y"));
 
+            TextView accel_z = (TextView) findViewById(R.id.accel_z);
+            accel_z.setText(intent.getExtras().getString("z"));
+        }
+    };
+
+    BroadcastReceiver updateMag = new BroadcastReceiver() {//Receiver for Magnemoter only
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            TextView gyro_x = (TextView) findViewById(R.id.gyro_x);
+            gyro_x.setText(intent.getExtras().getString("x"));
+
+            TextView gyro_y = (TextView) findViewById(R.id.gyro_y);
+            gyro_y.setText(intent.getExtras().getString("y"));
+
+            TextView gyro_z = (TextView) findViewById(R.id.gyro_z);
+            gyro_z.setText(intent.getExtras().getString("z"));
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,21 +53,9 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        BroadcastReceiver updateMag = new BroadcastReceiver() {//Receiver for Magnemoter only
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                TextView gyro_x = (TextView) findViewById(R.id.gyro_x);
-                gyro_x.setText(intent.getExtras().getString("x"));
-
-                TextView gyro_y = (TextView) findViewById(R.id.gyro_y);
-                gyro_y.setText(intent.getExtras().getString("y"));
-
-                TextView gyro_z = (TextView) findViewById(R.id.gyro_z);
-                gyro_z.setText(intent.getExtras().getString("z"));
-            }
-        };
         registerReceiver(updateMag, new IntentFilter("MAG_UPDATED"));
 
+        registerReceiver(updateAccel, new IntentFilter("ACCEL_UPDATED"));
 
         Accelerometer_Service.start(this.getApplicationContext());
         Accelerometer_Service.appIsNowActive();
@@ -59,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
     public void onPause(){
         super.onPause();
         Accelerometer_Service.appIsNowInactive();
+        unregisterReceiver(updateAccel);
+        unregisterReceiver(updateMag);
+
 //        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 //        SharedPreferences.Editor editor = prefs.edit();
 //
@@ -69,7 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void onResume(){
         super.onResume();
-
+        registerReceiver(updateMag, new IntentFilter("MAG_UPDATED"));
+        registerReceiver(updateAccel, new IntentFilter("ACCEL_UPDATED"));
         Accelerometer_Service.appIsNowActive();
 //        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 //        SharedPreferences.Editor editor = prefs.edit();
@@ -92,6 +109,11 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
+    public boolean getGravityButton(){
+        ToggleButton gravity_togglebutton = (ToggleButton)  findViewById(R.id.toggleButton_Gravity);
+        return gravity_togglebutton.isChecked();
+
+    }
 
     public void loggingToggle(View view) {
         ToggleButton logging_togglebutton = (ToggleButton) findViewById(R.id.toggleButton_Logging);
@@ -101,16 +123,25 @@ public class MainActivity extends AppCompatActivity {
 
         if (logging_togglebutton.isChecked()){
 
-
-
 //            editor.putBoolean("loggingEnabled", true);
             Accelerometer_Service.startLogging();
         }else{
 
-
-
 //            editor.putBoolean("loggingEnabled", false);
             Accelerometer_Service.stopLogging();
         }
+    }
+
+
+    public void gravityToggle(View view) {
+        ToggleButton gravity_togglebutton = (ToggleButton) findViewById(R.id.toggleButton_Gravity);
+        if (gravity_togglebutton.isChecked()){
+
+            Accelerometer_Service.setGravityFilter(true);
+        }else{
+
+            Accelerometer_Service.setGravityFilter(false);
+        }
+
     }
 }

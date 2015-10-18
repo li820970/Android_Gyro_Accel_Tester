@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.hardware.*; //I'm lazy
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -21,6 +22,7 @@ public class Accelerometer_Service {
     private static boolean started = false;
 
     private static float[] accel_reading = new float[3];
+    private static float[] gravity_accel = new float[3];
     private static float[] mag_reading = new float[3];
 
     private static float[] rotation_matrix = new float[9];
@@ -37,10 +39,11 @@ public class Accelerometer_Service {
 
     private static boolean isAppActive = true;
     private static boolean loggingActive = false;
+    private static boolean gravityFilter = false;
 
     public static void start(final Context applicationContext){
         if(started) return;
-       // SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+        // SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext);
 
 
 
@@ -48,7 +51,7 @@ public class Accelerometer_Service {
         sensor_event_listener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
-               // SharedPreferences prefs = PreferenceManager.getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
+                // SharedPreferences prefs = PreferenceManager.getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 
 
                 int type = event.sensor.getType();
@@ -71,8 +74,32 @@ public class Accelerometer_Service {
                 if(type == Sensor.TYPE_ACCELEROMETER){
                     accel_reading = event.values.clone();
 
+                    if(isAppActive){
+
+
+                        if (gravityFilter) {
+                            Intent i = new Intent("ACCEL_UPDATED");
+                            i.putExtra("x", Float.toString(accel_reading[0] - gravity_accel[0]));
+                            i.putExtra("y", Float.toString(accel_reading[1] - gravity_accel[1]));
+                            i.putExtra("z", Float.toString(accel_reading[2] - gravity_accel[2]));
+
+                            applicationContext.sendBroadcast(i);
+                        }else{
+                            Intent i = new Intent("ACCEL_UPDATED");
+                            i.putExtra("x", Float.toString(accel_reading[0]));
+                            i.putExtra("y", Float.toString(accel_reading[1]));
+                            i.putExtra("z", Float.toString(accel_reading[2]));
+
+                            applicationContext.sendBroadcast(i);
+                        }
+                    }
 
                 }
+
+                if(type == Sensor.TYPE_GRAVITY){
+                    gravity_accel = event.values.clone();
+                }
+
 
                 sensor_manager.getRotationMatrix(rotation_matrix,inclination_matrix,accel_reading,mag_reading);
                 sensor_manager.getOrientation(rotation_matrix,attitude);
@@ -114,7 +141,11 @@ public class Accelerometer_Service {
         loggingActive = true;
     }
     public static void stopLogging(){
-        loggingActive = true;
+        loggingActive = false;
+    }
+
+    public static void setGravityFilter(boolean val){
+        gravityFilter = val;
     }
 
     public static boolean getLogging(){
@@ -127,11 +158,11 @@ public class Accelerometer_Service {
     public static void appIsNowInactive(){isAppActive = false;}
     public static void appIsNowActive(){isAppActive = true;}
 
-    public static float getMagX(){
-        return mag_reading[0];
-    }
-    public static float getMagY(){ return mag_reading[1]; }
-    public static float getMagZ(){  return mag_reading[2]; }
+//    public static float getMagX(){
+//        return mag_reading[0];
+//    }
+//    public static float getMagY(){ return mag_reading[1]; }
+//    public static float getMagZ(){  return mag_reading[2]; }
 
 
 }
