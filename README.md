@@ -7,8 +7,7 @@ TODO
 
 -logging
 
--change package name to something that's not this repo (I though the website field would just add a @tag or something :( )
-
+-change package name to something that's not this repo 
 -add support for other sensors
 
 -maybe get a proper naming convention
