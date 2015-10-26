@@ -8,8 +8,15 @@ import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.opencsv.CSVWriter;
+
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.prefs.Preferences;
 
 /**
@@ -40,6 +47,8 @@ public class Accelerometer_Service {
     private static boolean isAppActive = true;
     private static boolean loggingActive = false;
     private static boolean gravityFilter = false;
+
+    private static CSVWriter csv_writer;
 
     public static void start(final Context applicationContext){
         if(started) return;
@@ -137,11 +146,37 @@ public class Accelerometer_Service {
         }
     }
 
-    public static void startLogging(){
-        loggingActive = true;
+    public static void startLogging() throws IOException {
+        if (!loggingActive){
+//            String baseDir = android.os.Environment.getDataDirectory().getAbsolutePath();
+            String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+            String fileName =  DateFormat.getDateTimeInstance().format(new Date())+".csv";
+            String filePath = baseDir + File.separator + fileName;
+            //File f = new File(filePath );
+
+//            try {
+            csv_writer = new CSVWriter(new FileWriter(filePath.replace(":","")));
+//            } catch (IOException e) {
+//                //e.printStackTrace();
+//
+//            }
+
+            String[] data = {"Time", "Mag x", "Mag y", "Mag z", "Accel x", "Accel y", "Accel z"};
+            csv_writer.writeNext(data);
+            loggingActive = true;
+
+        }
     }
-    public static void stopLogging(){
-        loggingActive = false;
+    public static void stopLogging() throws IOException {
+        if (loggingActive){
+//            try {
+            csv_writer.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            loggingActive = false;
+
+        }
     }
 
     public static void setGravityFilter(boolean val){
@@ -152,6 +187,14 @@ public class Accelerometer_Service {
         return loggingActive;
     }
     public static void AddLogEntry(){
+        if (loggingActive){
+            String[] data = {DateFormat.getTimeInstance().format(new Date()),
+                    String.valueOf(mag_reading[0]),  String.valueOf(mag_reading[1]),  String.valueOf(mag_reading[2]),
+                    String.valueOf(accel_reading[0]), String.valueOf(accel_reading[1]), String.valueOf(accel_reading[2])
+            };
+
+            csv_writer.writeNext(data );
+        }
 
 
     }

@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity {
     BroadcastReceiver updateAccel = new BroadcastReceiver() {//Receiver for Magnemoter only
         @Override
@@ -124,11 +126,21 @@ public class MainActivity extends AppCompatActivity {
         if (logging_togglebutton.isChecked()){
 
 //            editor.putBoolean("loggingEnabled", true);
-            Accelerometer_Service.startLogging();
+
+            try {
+                Accelerometer_Service.startLogging();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }else{
 
 //            editor.putBoolean("loggingEnabled", false);
-            Accelerometer_Service.stopLogging();
+            try {
+                Accelerometer_Service.stopLogging();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
