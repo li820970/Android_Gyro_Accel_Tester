@@ -15,6 +15,7 @@ import org.w3c.dom.Text;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.Timestamp;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.prefs.Preferences;
@@ -62,7 +63,9 @@ public class Accelerometer_Service {
             public void onSensorChanged(SensorEvent event) {
                 // SharedPreferences prefs = PreferenceManager.getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 
-
+                if(loggingActive){
+                    AddLogEntry(Timestamp);
+                }
                 int type = event.sensor.getType();
 
                 if(type == Sensor.TYPE_MAGNETIC_FIELD){
@@ -92,6 +95,10 @@ public class Accelerometer_Service {
                             i.putExtra("y", Float.toString(accel_reading[1] - gravity_accel[1]));
                             i.putExtra("z", Float.toString(accel_reading[2] - gravity_accel[2]));
 
+
+//                            i.putExtra("x",  gravity_accel[0]);
+//                            i.putExtra("y",  gravity_accel[1]);
+//                            i.putExtra("z",  gravity_accel[2]);
                             applicationContext.sendBroadcast(i);
                         }else{
                             Intent i = new Intent("ACCEL_UPDATED");
@@ -110,8 +117,9 @@ public class Accelerometer_Service {
                 }
 
 
-                sensor_manager.getRotationMatrix(rotation_matrix,inclination_matrix,accel_reading,mag_reading);
+                sensor_manager.getRotationMatrix(rotation_matrix, inclination_matrix, accel_reading, mag_reading);
                 sensor_manager.getOrientation(rotation_matrix,attitude);
+
 
                 attitude_in_degrees[0] =  (int) Math.round(attitude[0] * RAD2DEG);    //azimuth
                 attitude_in_degrees[1] = (int) Math.round(attitude[1] * RAD2DEG);     //pitch
@@ -155,13 +163,13 @@ public class Accelerometer_Service {
             //File f = new File(filePath );
 
 //            try {
-            csv_writer = new CSVWriter(new FileWriter(filePath.replace(":","")));
+            csv_writer = new CSVWriter(new FileWriter(filePath.replace(":","-")));
 //            } catch (IOException e) {
 //                //e.printStackTrace();
 //
 //            }
 
-            String[] data = {"Time", "Mag x", "Mag y", "Mag z", "Accel x", "Accel y", "Accel z"};
+            String[] data = {"Time", "TimeStamp","Mag x", "Mag y", "Mag z", "Accel x", "Accel y", "Accel z"};
             csv_writer.writeNext(data);
             loggingActive = true;
 
@@ -186,9 +194,9 @@ public class Accelerometer_Service {
     public static boolean getLogging(){
         return loggingActive;
     }
-    public static void AddLogEntry(){
+    public static void AddLogEntry(long time_stamp){
         if (loggingActive){
-            String[] data = {DateFormat.getTimeInstance().format(new Date()),
+            String[] data = {DateFormat.getTimeInstance().format(new Date()),String.valueOf(time_stamp),
                     String.valueOf(mag_reading[0]),  String.valueOf(mag_reading[1]),  String.valueOf(mag_reading[2]),
                     String.valueOf(accel_reading[0]), String.valueOf(accel_reading[1]), String.valueOf(accel_reading[2])
             };
