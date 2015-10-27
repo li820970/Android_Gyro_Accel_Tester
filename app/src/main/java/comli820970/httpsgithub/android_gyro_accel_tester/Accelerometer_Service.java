@@ -64,7 +64,7 @@ public class Accelerometer_Service {
                 // SharedPreferences prefs = PreferenceManager.getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 
                 if(loggingActive){
-                    AddLogEntry(Timestamp);
+                    AddLogEntry(event.timestamp);
                 }
                 int type = event.sensor.getType();
 
