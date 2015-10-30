@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -30,6 +28,21 @@ public class MainActivity extends AppCompatActivity {
     };
 
     BroadcastReceiver updateMag = new BroadcastReceiver() {//Receiver for Magnemoter only
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            TextView gyro_x = (TextView) findViewById(R.id.mag_x);
+            gyro_x.setText(intent.getExtras().getString("x"));
+
+            TextView gyro_y = (TextView) findViewById(R.id.mag_y);
+            gyro_y.setText(intent.getExtras().getString("y"));
+
+            TextView gyro_z = (TextView) findViewById(R.id.mag_z);
+            gyro_z.setText(intent.getExtras().getString("z"));
+        }
+    };
+
+
+    BroadcastReceiver updateGyro = new BroadcastReceiver() {//Receiver for Magnemoter only
         @Override
         public void onReceive(Context context, Intent intent) {
             TextView gyro_x = (TextView) findViewById(R.id.gyro_x);
@@ -59,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
         registerReceiver(updateAccel, new IntentFilter("ACCEL_UPDATED"));
 
+        registerReceiver(updateGyro, new IntentFilter("GYRO_UPDATED"));
+
         Accelerometer_Service.start(this.getApplicationContext());
         Accelerometer_Service.appIsNowActive();
 
@@ -76,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         Accelerometer_Service.appIsNowInactive();
         unregisterReceiver(updateAccel);
         unregisterReceiver(updateMag);
-
+        unregisterReceiver(updateGyro);
 //        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 //        SharedPreferences.Editor editor = prefs.edit();
 //
@@ -89,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         registerReceiver(updateMag, new IntentFilter("MAG_UPDATED"));
         registerReceiver(updateAccel, new IntentFilter("ACCEL_UPDATED"));
+        registerReceiver(updateGyro, new IntentFilter("GYRO_UPDATED"));
+
         Accelerometer_Service.appIsNowActive();
 //        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 //        SharedPreferences.Editor editor = prefs.edit();

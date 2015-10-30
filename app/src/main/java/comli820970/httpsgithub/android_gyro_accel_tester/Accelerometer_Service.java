@@ -32,6 +32,7 @@ public class Accelerometer_Service {
     private static float[] accel_reading = new float[3];
     private static float[] gravity_accel = new float[3];
     private static float[] mag_reading = new float[3];
+    private static float[] gyro_reading = new float[3];
 
     private static float[] rotation_matrix = new float[9];
     private static float[] inclination_matrix = new float[9];
@@ -83,6 +84,23 @@ public class Accelerometer_Service {
 
 
                 }
+
+                if(type == Sensor.TYPE_GYROSCOPE){
+                    gyro_reading = event.values.clone();
+
+                    if(isAppActive){
+                        Intent i = new Intent("GYRO_UPDATED");
+                        i.putExtra("x",Float.toString(gyro_reading[0]));
+                        i.putExtra("y",Float.toString(gyro_reading[1]));
+                        i.putExtra("z",Float.toString(gyro_reading[2]));
+
+                        applicationContext.sendBroadcast(i);
+
+                    }
+
+
+                }
+
                 if(type == Sensor.TYPE_ACCELEROMETER){
                     accel_reading = event.values.clone();
 
@@ -138,8 +156,14 @@ public class Accelerometer_Service {
         sensor_manager.registerListener(sensor_event_listener,
                 sensor_manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
                 SensorManager.SENSOR_DELAY_UI);
+        sensor_manager.registerListener(sensor_event_listener,
+                sensor_manager.getDefaultSensor(Sensor.TYPE_GRAVITY),
+                SensorManager.SENSOR_DELAY_UI);
+        sensor_manager.registerListener(sensor_event_listener,
+                sensor_manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),
+                SensorManager.SENSOR_DELAY_UI);
 
-        started = true;
+                started = true;
 
     }
 
@@ -169,7 +193,12 @@ public class Accelerometer_Service {
 //
 //            }
 
-            String[] data = {"Time", "TimeStamp","Mag x", "Mag y", "Mag z", "Accel x", "Accel y", "Accel z"};
+            String[] data = {"Time", "TimeStamp",
+                    "Mag x", "Mag y", "Mag z",
+                    "Accel x", "Accel y", "Accel z",
+                    "Gyro x", "Gyro y", "Gyro z",
+                    "Gravity x", "Gravity y", "Gravity z"
+            };
             csv_writer.writeNext(data);
             loggingActive = true;
 
@@ -198,7 +227,10 @@ public class Accelerometer_Service {
         if (loggingActive){
             String[] data = {DateFormat.getTimeInstance().format(new Date()),String.valueOf(time_stamp),
                     String.valueOf(mag_reading[0]),  String.valueOf(mag_reading[1]),  String.valueOf(mag_reading[2]),
-                    String.valueOf(accel_reading[0]), String.valueOf(accel_reading[1]), String.valueOf(accel_reading[2])
+                    String.valueOf(accel_reading[0]), String.valueOf(accel_reading[1]), String.valueOf(accel_reading[2]),
+                    String.valueOf(gyro_reading[0]), String.valueOf(gyro_reading[1]), String.valueOf(gyro_reading[2]),
+                    String.valueOf(gravity_accel[0]), String.valueOf(gravity_accel[1]), String.valueOf(gravity_accel[2])
+
             };
 
             csv_writer.writeNext(data );
