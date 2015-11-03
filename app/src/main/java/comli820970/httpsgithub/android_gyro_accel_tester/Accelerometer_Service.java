@@ -67,6 +67,7 @@ public class Accelerometer_Service {
                 if(loggingActive){
                     AddLogEntry(event.timestamp);
                 }
+
                 int type = event.sensor.getType();
 
                 if(type == Sensor.TYPE_MAGNETIC_FIELD){
