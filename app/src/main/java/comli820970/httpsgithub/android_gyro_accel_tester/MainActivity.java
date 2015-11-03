@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private WiFiDirectBroadcastReceiver WiFiReceiver;
+    private WiFiDirectBroadcastReceiver wifiReceiver;
 
 
 
@@ -82,8 +82,8 @@ public class MainActivity extends AppCompatActivity {
         Accelerometer_Service.start(this.getApplicationContext());
         Accelerometer_Service.appIsNowActive();
 
-//        WifiP2pManager wifiP2pManager = new WifiP2pManager();
-
+       WifiP2pManager wifiP2pManager = new WifiP2pManager();
+        wifiReceiver = new WiFiDirectBroadcastReceiver(wifiP2pManager, wifiP2pManager.channel, this);
 
         //updateGyroValues();
 
