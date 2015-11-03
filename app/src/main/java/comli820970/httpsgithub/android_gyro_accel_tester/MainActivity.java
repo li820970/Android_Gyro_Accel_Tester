@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -56,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private WiFiDirectBroadcastReceiver WiFiReceiver;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,8 +82,7 @@ public class MainActivity extends AppCompatActivity {
         Accelerometer_Service.start(this.getApplicationContext());
         Accelerometer_Service.appIsNowActive();
 
-
-
+//        WifiP2pManager wifiP2pManager = new WifiP2pManager();
 
 
         //updateGyroValues();
