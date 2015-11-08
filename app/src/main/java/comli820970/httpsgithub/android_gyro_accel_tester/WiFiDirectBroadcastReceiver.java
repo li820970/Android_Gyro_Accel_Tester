@@ -3,6 +3,7 @@ package comli820970.httpsgithub.android_gyro_accel_tester;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 
 import java.nio.channels.Channel;
@@ -13,10 +14,10 @@ import java.nio.channels.Channel;
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
 
     private WifiP2pManager m_Manager;
-    private Channel m_Channel;
+    private WifiP2pManager.Channel m_Channel;
     private MainActivity m_Activity;
 
-    public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel, MainActivity activity) {
+    public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel, MainActivity activity) {
         super();
 
         this.m_Manager = manager;
@@ -27,15 +28,31 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
-            // Check to see if Wi-Fi is enabled and notify appropriate activity
+            // Determine if Wifi P2P mode is enabled or not, alert
+            // the Activity.
+            int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
+            if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
+                m_Activity.setIsWifiP2pEnabled(true);
+            } else {
+                m_Activity.setIsWifiP2pEnabled(false);
+            }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-            // Call WifiP2pManager.requestPeers() to get a list of current peers
+
+            // The peer list has changed!  We should probably do something about
+            // that.
+
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
-            // Respond to new connection or disconnections
+
+            // Connection state changed!  We should probably do something about
+            // that.
+
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-            // Respond to this device's wifi state changing
+
+//            DeviceListFragment fragment = (DeviceListFragment) m_Activity.getFragmentManager()
+//                    .findFragmentById(R.id.frag_list);
+//            fragment.updateThisDevice((WifiP2pDevice) intent.getParcelableExtra(
+//                    WifiP2pManager.EXTRA_WIFI_P2P_DEVICE));
         }
     }
 

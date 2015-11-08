@@ -57,9 +57,14 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private WiFiDirectBroadcastReceiver wifiReceiver;
+//    private WiFiDirectBroadcastReceiver wifiReceiver;
 
+    private  IntentFilter wifip2p_intentfilter = new IntentFilter();
 
+    private WifiP2pManager wifip2p_manager;
+    private WifiP2pManager.Channel wifip2p_channel;
+    private WiFiDirectBroadcastReceiver wifiP2preceiver;
+    private boolean WifiP2pEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,14 +84,31 @@ public class MainActivity extends AppCompatActivity {
 
         registerReceiver(updateGyro, new IntentFilter("GYRO_UPDATED"));
 
+
         Accelerometer_Service.start(this.getApplicationContext());
         Accelerometer_Service.appIsNowActive();
 
-       WifiP2pManager wifiP2pManager = new WifiP2pManager();
-        wifiReceiver = new WiFiDirectBroadcastReceiver(wifiP2pManager, wifiP2pManager.channel, this);
-
+//       WifiP2pManager wifiP2pManager = new WifiP2pManager();
+//        wifiReceiver = new WiFiDirectBroadcastReceiver(wifiP2pManager, wifiP2pManager.channel, this);
         //updateGyroValues();
 
+        //  Indicates a change in the Wi-Fi P2P status.
+        wifip2p_intentfilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+
+        // Indicates a change in the list of available peers.
+        wifip2p_intentfilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+
+        // Indicates the state of Wi-Fi P2P connectivity has changed.
+        wifip2p_intentfilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+
+        // Indicates this device's details have changed.
+        wifip2p_intentfilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        wifip2p_manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        wifip2p_channel = wifip2p_manager.initialize(this, getMainLooper(), null);
+
+        wifiP2preceiver = new WiFiDirectBroadcastReceiver(wifip2p_manager, wifip2p_channel, this);
+        registerReceiver(wifiP2preceiver, wifip2p_intentfilter);
 
     }
 
@@ -96,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(updateAccel);
         unregisterReceiver(updateMag);
         unregisterReceiver(updateGyro);
+
+        unregisterReceiver(wifiP2preceiver);
 //        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 //        SharedPreferences.Editor editor = prefs.edit();
 //
@@ -110,7 +134,11 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(updateAccel, new IntentFilter("ACCEL_UPDATED"));
         registerReceiver(updateGyro, new IntentFilter("GYRO_UPDATED"));
 
+        wifiP2preceiver = new WiFiDirectBroadcastReceiver(wifip2p_manager, wifip2p_channel, this);
+        registerReceiver(wifiP2preceiver, wifip2p_intentfilter);
+
         Accelerometer_Service.appIsNowActive();
+
 //        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 //        SharedPreferences.Editor editor = prefs.edit();
 //
@@ -138,6 +166,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void setIsWifiP2pEnabled(boolean status){
+        WifiP2pEnabled = status;
+    }
     public void loggingToggle(View view) {
         ToggleButton logging_togglebutton = (ToggleButton) findViewById(R.id.toggleButton_Logging);
 
