@@ -220,7 +220,6 @@ public class Accelerometer_Service {
     public static void setGravityFilter(boolean val){
         gravityFilter = val;
     }
-
     public static boolean getLogging(){
         return loggingActive;
     }

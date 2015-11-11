@@ -147,12 +147,24 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="P2pFindPeers"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Gyro_Z Placeholder"
         android:id="@+id/gyro_z"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/gyro_y"
         android:layout_alignParentLeft="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Find Peers"
+        android:id="@+id/button_PeerDisc"
+        android:layout_below="@+id/gyro_z"
+        android:layout_alignLeft="@+id/toggleButton_Gravity"
+        android:layout_alignStart="@+id/toggleButton_Gravity"
+        android:layout_alignRight="@+id/toggleButton_Gravity"
+        android:layout_alignEnd="@+id/toggleButton_Gravity" />
     <!--USE THIS^ WITH NESTED LINEAR LAYOUT LATER-->
 
 </RelativeLayout>

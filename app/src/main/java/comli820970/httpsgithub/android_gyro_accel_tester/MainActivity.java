@@ -8,6 +8,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -63,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
     private WifiP2pManager wifip2p_manager;
     private WifiP2pManager.Channel wifip2p_channel;
-    private WiFiDirectBroadcastReceiver wifiP2preceiver;
+    private WiFiDirectBroadcastReceiver wifiP2p_receiver;
     private boolean WifiP2pEnabled;
+    private ListViewAdaptor wifiP2p_listviewadaptor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,22 +96,22 @@ public class MainActivity extends AppCompatActivity {
 
         //  Indicates a change in the Wi-Fi P2P status.
         wifip2p_intentfilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-
         // Indicates a change in the list of available peers.
         wifip2p_intentfilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-
         // Indicates the state of Wi-Fi P2P connectivity has changed.
         wifip2p_intentfilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-
         // Indicates this device's details have changed.
         wifip2p_intentfilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         wifip2p_manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         wifip2p_channel = wifip2p_manager.initialize(this, getMainLooper(), null);
 
-        wifiP2preceiver = new WiFiDirectBroadcastReceiver(wifip2p_manager, wifip2p_channel, this);
-        registerReceiver(wifiP2preceiver, wifip2p_intentfilter);
+        wifiP2p_receiver = new WiFiDirectBroadcastReceiver(wifip2p_manager, wifip2p_channel, this);
+        registerReceiver(wifiP2p_receiver, wifip2p_intentfilter);
 
+        wifiP2p_listviewadaptor = new ListViewAdaptor(this.getApplicationContext(), R.layout.wifip2plistview,
+                R.id.p2pList, wifiP2p_receiver.getPeers()
+                );
     }
 
     public void onPause(){
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(updateMag);
         unregisterReceiver(updateGyro);
 
-        unregisterReceiver(wifiP2preceiver);
+        unregisterReceiver(wifiP2p_receiver);
 //        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 //        SharedPreferences.Editor editor = prefs.edit();
 //
@@ -134,30 +136,14 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(updateAccel, new IntentFilter("ACCEL_UPDATED"));
         registerReceiver(updateGyro, new IntentFilter("GYRO_UPDATED"));
 
-        wifiP2preceiver = new WiFiDirectBroadcastReceiver(wifip2p_manager, wifip2p_channel, this);
-        registerReceiver(wifiP2preceiver, wifip2p_intentfilter);
+        wifiP2p_receiver = new WiFiDirectBroadcastReceiver(wifip2p_manager, wifip2p_channel, this);
+        registerReceiver(wifiP2p_receiver, wifip2p_intentfilter);
 
         Accelerometer_Service.appIsNowActive();
 
-//        SharedPreferences prefs = getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
-//        SharedPreferences.Editor editor = prefs.edit();
-//
-//        ToggleButton logging_togglebutton = (ToggleButton) findViewById(R.id.toggleButton_Logging);
-//
-//        editor.putBoolean("isActive", true); // Storing string
-//        logging_togglebutton.setChecked(prefs.getBoolean("loggingEnabled", false));//set proper state of logging button
-//        editor.commit();
     }
 
-//    public void updateGyroValues(){
-//        TextView gyro_x = (TextView) findViewById(R.id.gyro_x);
-//        TextView gyro_y = (TextView) findViewById(R.id.gyro_y);
-//        TextView gyro_z = (TextView) findViewById(R.id.gyro_z);
-//
-//        gyro_x.setText(Float.toString(Accelerometer_Service.getMagX()));
-//        gyro_y.setText(Float.toString(Accelerometer_Service.getMagY()));
-//        gyro_z.setText(Float.toString(Accelerometer_Service.getMagZ()));
-//    }
+
 
 
     public boolean getGravityButton(){
@@ -195,6 +181,28 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+public void P2pFindPeers(){
+    wifip2p_manager.discoverPeers(wifip2p_channel, new WifiP2pManager.ActionListener() {
+
+        @Override
+        public void onSuccess() {
+            // Code for when the discovery initiation is successful goes here.
+            // No services have actually been discovered yet, so this method
+            // can often be left blank.  Code for peer discovery goes in the
+            // onReceive method, detailed below.
+        }
+
+        @Override
+        public void onFailure(int reasonCode) {
+            // Code for when the discovery initiation fails goes here.
+            // Alert the user that something went wrong.
+        }
+
+    });
+
+}
+
 
 
     public void gravityToggle(View view) {

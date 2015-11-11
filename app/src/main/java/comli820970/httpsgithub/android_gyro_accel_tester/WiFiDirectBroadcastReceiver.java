@@ -3,10 +3,11 @@ package comli820970.httpsgithub.android_gyro_accel_tester;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 
-import java.nio.channels.Channel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Colin on 11/2/2015.
@@ -16,6 +17,27 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
     private WifiP2pManager m_Manager;
     private WifiP2pManager.Channel m_Channel;
     private MainActivity m_Activity;
+    private List peers = new ArrayList();
+
+
+    private WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
+        @Override
+        public void onPeersAvailable(WifiP2pDeviceList peerList) {
+
+            // Out with the old, in with the new.
+            getPeers().clear();
+            getPeers().addAll(peerList.getDeviceList());
+
+            // If an AdapterView is backed by this data, notify it
+            // of the change.  For instance, if you have a ListView of available
+            // peers, trigger an update.
+//            ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
+//            if (peers.size() == 0) {
+//                Log.d("Main Activity", "No devices found");
+//                return;
+//            }
+        }
+    };
 
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel, MainActivity activity) {
         super();
@@ -32,16 +54,20 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
             // Determine if Wifi P2P mode is enabled or not, alert
             // the Activity.
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
+
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                 m_Activity.setIsWifiP2pEnabled(true);
             } else {
                 m_Activity.setIsWifiP2pEnabled(false);
             }
-        } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+        }else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
 
-            // The peer list has changed!  We should probably do something about
-            // that.
-
+                // Request available peers from the wifi p2p manager. This is an
+                // asynchronous call and the calling activity is notified with a
+                // callback on PeerListListener.onPeersAvailable()
+            if (m_Manager != null) {
+                m_Manager.requestPeers(m_Channel, peerListListener);
+            }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
 
             // Connection state changed!  We should probably do something about
@@ -57,4 +83,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver{
     }
 
 
+    public List getPeers() {
+        return peers;
+    }
 }
