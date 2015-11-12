@@ -64,9 +64,7 @@ public class Accelerometer_Service {
             public void onSensorChanged(SensorEvent event) {
                 // SharedPreferences prefs = PreferenceManager.getSharedPreferences("GyroTester", MODE_WORLD_READABLE);
 
-                if(loggingActive){
-                    AddLogEntry(event.timestamp);
-                }
+
 
                 int type = event.sensor.getType();
 
@@ -135,6 +133,9 @@ public class Accelerometer_Service {
                     gravity_accel = event.values.clone();
                 }
 
+                if(loggingActive){
+                    AddLogEntry(event.timestamp);
+                }
 
                 sensor_manager.getRotationMatrix(rotation_matrix, inclination_matrix, accel_reading, mag_reading);
                 sensor_manager.getOrientation(rotation_matrix,attitude);
@@ -225,7 +226,7 @@ public class Accelerometer_Service {
     }
     public static void AddLogEntry(long time_stamp){
         if (loggingActive){
-            String[] data = {DateFormat.getTimeInstance().format(new Date()),String.valueOf(time_stamp),
+            String[] data = {DateFormat.getTimeInstance().format(new Date()),Long.toString(time_stamp),
                     String.valueOf(mag_reading[0]),  String.valueOf(mag_reading[1]),  String.valueOf(mag_reading[2]),
                     String.valueOf(accel_reading[0]), String.valueOf(accel_reading[1]), String.valueOf(accel_reading[2]),
                     String.valueOf(gyro_reading[0]), String.valueOf(gyro_reading[1]), String.valueOf(gyro_reading[2]),
