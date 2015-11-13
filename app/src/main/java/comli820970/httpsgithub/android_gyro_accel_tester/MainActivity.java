@@ -8,8 +8,10 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.io.IOException;
@@ -112,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
         wifiP2p_listviewadaptor = new ListViewAdaptor(this.getApplicationContext(), R.layout.wifip2plistview,
                 R.id.p2pList, wifiP2p_receiver.getPeers()
                 );
+       ListView wifiP2pListView = (ListView)findViewById(R.id.p2pList);
+        wifiP2pListView.setAdapter(wifiP2p_listviewadaptor);
+
     }
 
     public void onPause(){
@@ -191,15 +196,18 @@ public void P2pFindPeers(){
             // No services have actually been discovered yet, so this method
             // can often be left blank.  Code for peer discovery goes in the
             // onReceive method, detailed below.
+            setContentView(R.layout.wifip2plistview);
         }
 
         @Override
         public void onFailure(int reasonCode) {
             // Code for when the discovery initiation fails goes here.
             // Alert the user that something went wrong.
+            Toast.makeText(getApplicationContext(), "Something went wrong!", Toast.LENGTH_SHORT);
         }
 
     });
+
 
 }
 
